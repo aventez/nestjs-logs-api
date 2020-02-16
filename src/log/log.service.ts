@@ -7,12 +7,13 @@ import { ConfigService } from '@nestjs/config';
 export class LogService {
     constructor(private readonly configService: ConfigService) {}
 
-    async findByPattern(pattern: string): Promise<string[]>
+    async findByPattern(pattern: string, minDate: string, maxDate: string): Promise<string[]>
     {
         return new Promise(async (resolve, reject) => {
-            if( !safeRegex(pattern) ) reject('Expression may be evil.');
-            let result = [];
+            let result = new Array();
             let filePath = this.configService.get<string>('LOG_DIR');
+
+            if( !safeRegex(pattern) ) reject('Expression may be evil.');
 
             lineReader.eachLine(filePath, async (line: string, last: boolean) => {
                 try {

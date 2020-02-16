@@ -1,6 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { LogModule } from './log/log.module';
 import { ConfigModule } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './filters/all-exceptions-filter';
 
 @Module({
   imports: [
@@ -11,6 +13,11 @@ import { ConfigModule } from '@nestjs/config';
     })
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter
+    }
+  ],
 })
 export class AppModule {}

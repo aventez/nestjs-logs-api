@@ -1,20 +1,14 @@
-import { Controller, Get, Param, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, HttpException, HttpStatus, Query, UseFilters } from '@nestjs/common';
 import { LogService } from './log.service';
 
 @Controller('logs')
 export class LogController {
     constructor(private readonly logService: LogService) {}
 
-    @Get('find/:pattern')
-    async findMatches(@Param('pattern') pattern): Promise<string> {
-        let result = null;
+    @Get('find')
+    async findMatches(@Query() query): Promise<string> {
+        if( query.pattern === undefined ) throw new HttpException('You have to enter correct pattern.', HttpStatus.BAD_REQUEST);
 
-        try {
-            result = await this.logService.findByPattern(pattern);
-        } catch {}
-
-        if( !result ) throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
-  
-        return JSON.stringify(result);
+        return JSON.stringify(await this.logService.findByPattern(query.pattern, query.minDate, query.maxDate));
     }
 }
